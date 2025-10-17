@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Frontend → Backend (WSGI)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>body{font-family:sans-serif;max-width:700px;margin:40px auto;padding:0 12px}button{padding:10px 14px;margin-right:8px}</style>
+</head>
+<body>
+  <h1>Demo: Front → Back (WSGI)</h1>
+  <p>Prueba GET y POST al backend sin Flask.</p>
+  <button id="btn-get">GET /action</button>
+  <button id="btn-post">POST /action</button>
+  <h3>Resultado:</h3>
+  <pre id="out">—</pre>
+
+<script>
+const BACKEND = "https://BACKEND_URL.onrender.com"; // <<--- pega aquí la URL de Render (solo dominio)
+const out = document.getElementById('out');
+
+async function doGet(){
+  out.textContent = 'Cargando GET...';
+  try{
+    const r = await fetch(`${BACKEND}/action`);
+    const j = await r.json();
+    out.textContent = JSON.stringify(j, null, 2);
+  }catch(e){
+    out.textContent = 'Error: ' + e.message;
+  }
+}
+
+async function doPost(){
+  out.textContent = 'Enviando POST...';
+  try{
+    const r = await fetch(`${BACKEND}/action`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({user:'Profesor', time:new Date().toISOString()})
+    });
+    const j = await r.json();
+    out.textContent = JSON.stringify(j, null, 2);
+  }catch(e){
+    out.textContent = 'Error: ' + e.message;
+  }
+}
+
+document.getElementById('btn-get').addEventListener('click', doGet);
+document.getElementById('btn-post').addEventListener('click', doPost);
+</script>
+</body>
+</html>
